@@ -8,28 +8,40 @@ Java官方文档:http://hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/55f6804b4352/sr
 复杂极大数据量可以考虑复合排序算法：直接插入+归并排序保证稳定性与速度。
  */
 
+import java.util.Random;
+import java.util.Stack;
+
 public class Sort {
     int temp;
+    long startTime = 0;
+    long endTime = 0;
 
     public static void main(String[] args) {
         Sort m = new Sort();
-
-        m.print_ArrayList(m.dataInt(), "原数组");
-        m.bubble_Sort(m.dataInt());
-        m.insertion_Sort(m.dataInt());
-        m.shell_Sort(m.dataInt());
-        m.selection_Sort(m.dataInt());
-        m.heap_Sort(m.dataInt());
-        m.mergeSort(m.dataInt());
+        int[] temp = new int[8];
+//        m.print_ArrayList(m.dataInt(), "原数组", 0);
+//        m.bubble_Sort(m.dataInt());
+//        m.insertion_Sort(m.dataInt());
+//        m.shell_Sort(m.dataInt());
+//        m.selection_Sort(m.dataInt());
+//        m.heap_Sort(m.dataInt());
+//        m.mergeSort(m.dataInt());
+        m.quick_Sort(m.dataInt(),0,m.dataInt().length-1);
+        //m.radix_Sort(m.dataInt(), temp, m.dataInt().length, 2, 8, new int[8]);
 
     }
 
     public int[] dataInt() {
-        return new int[]{13, 2, 18, 19, 22, 4, 5, 3, -5};
+        int[] data = new int[5];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (int) (Math.random() * 100) - 50;
+        }
+        return data;
     }
 
 
     private void bubble_Sort(int[] a) {//冒泡排序
+        startTime = System.currentTimeMillis();
         int i, j, flag = 0;
         for (i = a.length - 1; i >= 0; i--) {
             for (j = 0; j < i; j++) {
@@ -42,11 +54,13 @@ public class Sort {
             }
             if (flag == 0) break;
         }
-        print_ArrayList(a, "冒泡排序");
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "冒泡排序", endTime - startTime);
 
     }
 
     private void insertion_Sort(int[] a) {//插入排序
+        startTime = System.currentTimeMillis();
         int i, j;
         for (i = 1; i < a.length; i++) {
             temp = a[i];
@@ -55,10 +69,12 @@ public class Sort {
             a[j] = temp;
 
         }
-        print_ArrayList(a, "插入排序");
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "插入排序", endTime - startTime);
     }
 
     private void shell_Sort(int[] a) {
+        startTime = System.currentTimeMillis();
         int D, i, j, temp;
         for (D = a.length / 2; D > 0; D /= 2) {
             for (i = D; i < a.length; i++) {
@@ -69,11 +85,13 @@ public class Sort {
                 a[j] = temp;
             }
         }
-        print_ArrayList(a, "希尔排序");
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "希尔排序", endTime - startTime);
 
     }
 
     private void selection_Sort(int[] a) {
+        startTime = System.currentTimeMillis();
         int i, j, min;
         for (i = 0; i < a.length - 1; i++) {
             min = i;
@@ -89,10 +107,12 @@ public class Sort {
             }
 
         }
-        print_ArrayList(a, "选择排序");
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "选择排序", endTime - startTime);
     }
 
     private void heap_Sort(int[] a) {
+        startTime = System.currentTimeMillis();
         //这里元素的索引是从0开始的,所以最后一个非叶子结点array.length/2 - 1
         for (int i = a.length / 2 - 1; i >= 0; i--) {
             adjustHeap(a, i);  //调整堆
@@ -109,7 +129,8 @@ public class Sort {
             // 而这里，实质上是自上而下，自左向右进行调整的
             adjustHeap(a, 0);
         }
-        print_ArrayList(a, "堆排序");
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "堆排序", endTime - startTime);
 
     }
 
@@ -138,6 +159,7 @@ public class Sort {
     }
 
     private void mergeSort(int[] a) {//非递归方式
+        startTime = System.currentTimeMillis();
         int span = 1;//范围初始为1
         while (span < a.length) {
             for (int left = 0; left < a.length; left += 2 * span) {
@@ -152,7 +174,8 @@ public class Sort {
             }
             span *= 2;
         }
-        print_ArrayList(a, "归并排序（非递归）");
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "归并排序（非递归）", endTime - startTime);
     }
 
     private void merge(int[] a, int left, int mid, int right) {
@@ -175,15 +198,73 @@ public class Sort {
         }
 
     }
-    private void quick_Sort(int[] a)
-    {
 
+
+    private void quick_Sort(int arr[], int start, int end) {
+        int pivot = arr[start];
+        int i = start;
+        int j = end;
+        while (i < j) {
+            while ((i < j) && (arr[j] > pivot)) {
+                j--;
+            }
+            while ((i < j) && (arr[i] < pivot)) {
+                i++;
+            }
+            if ((arr[i] == arr[j]) && (i < j)) {
+                i++;
+            } else {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        if (i - 1 > start) quick_Sort(arr, start, i - 1);
+        if (j + 1 < end) quick_Sort(arr, j + 1, end);
+       print_ArrayList(arr,"快速排序",0);
     }
 
-    private void print_ArrayList(int[] a, String str) {
+    private void radix_Sort(int[] A, int[] temp, int n, int k, int r, int[] cnt) {//基数排序
+        //A:原数组
+        //temp:临时数组
+        //n:序列的数字个数
+        //k:最大的位数2
+        //r:基数10
+        //cnt:存储bin[i]的个数
+        //负数解决方法：遍历所有数据，找出最小值，所有数据加上最小值的绝对值，处理完毕再减去最小值的绝对值。
+        startTime = System.currentTimeMillis();
+        for (int i = 0, rtok = 1; i < k; i++, rtok = rtok * r) {
+
+            //初始化
+            for (int j = 0; j < r; j++) {
+                cnt[j] = 0;
+            }
+            //计算每个箱子的数字个数
+            for (int j = 0; j < n; j++) {
+                cnt[(A[j] / rtok) % r]++;
+            }
+            //cnt[j]的个数修改为前j个箱子一共有几个数字
+            for (int j = 1; j < r; j++) {
+                cnt[j] = cnt[j - 1] + cnt[j];
+            }
+            for (int j = n - 1; j >= 0; j--) {      //重点理解
+                cnt[(A[j] / rtok) % r]--;
+                temp[cnt[(A[j] / rtok) % r]] = A[j];
+            }
+            for (int j = 0; j < n; j++) {
+                A[j] = temp[j];
+            }
+        }
+        endTime = System.currentTimeMillis();
+        print_ArrayList(A, "基数排序", endTime - startTime);
+    }
+
+    private void print_ArrayList(int[] a, String str, long time) {
         System.out.print(str + ":");
-        for (int j : a) System.out.print(j + " ");
-        System.out.println("");
+        for (int j : a)
+            System.out.print(j + " ");
+
+        System.out.println("排序所用时间：" + time + "ms");
 
     }
 
