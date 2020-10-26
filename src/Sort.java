@@ -8,7 +8,6 @@ Java官方文档:http://hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/55f6804b4352/sr
 复杂极大数据量可以考虑复合排序算法：直接插入+归并排序保证稳定性与速度。
  */
 
-import java.util.Random;
 import java.util.Stack;
 
 public class Sort {
@@ -20,21 +19,22 @@ public class Sort {
         Sort m = new Sort();
         int[] temp = new int[8];
 //        m.print_ArrayList(m.dataInt(), "原数组", 0);
-        m.bubble_Sort(m.dataInt());
-        m.insertion_Sort(m.dataInt());
-        m.insertion_Sort2(m.dataInt());
+//        m.bubble_Sort(m.dataInt());
+        m.insertion_Sort(m.dataInt());//直接插入排序
+//        m.insertion_Sort2(m.dataInt());//传统插入排序
 //        m.shell_Sort(m.dataInt());
-        m.selection_Sort(m.dataInt());
+//        m.selection_Sort(m.dataInt());
 
 //        m.heap_Sort(m.dataInt());
-        m.mergeSort(m.dataInt());
-        //    m.quick_Sort(m.dataInt(),0,m.dataInt().length-1);
+//        m.mergeSort(m.dataInt());
+        m.quick_SortInterface(m.dataInt());//递归快排
+        m.quick_SortInterface2(m.dataInt());//非递归快排
         //m.radix_Sort(m.dataInt(), temp, m.dataInt().length, 2, 8, new int[8]);
 
     }
 
     public int[] dataInt() {
-        int[] data = new int[5000];
+        int[] data = new int[700000];
         for (int i = 0; i < data.length; i++) {
             data[i] = (int) (Math.random() * 100) - 50;
         }
@@ -77,8 +77,8 @@ public class Sort {
 
     private void insertion_Sort2(int[] a) {//插入排序
         startTime = System.currentTimeMillis();
-        for (int i = 1; i < a.length ; i++) {
-            for (int j = i ; j > 0; j--) {
+        for (int i = 1; i < a.length; i++) {
+            for (int j = i; j > 0; j--) {
                 if (a[j] < a[j - 1]) {
                     temp = a[j - 1];
                     a[j - 1] = a[j];
@@ -218,8 +218,14 @@ public class Sort {
 
     }
 
+    private void quick_SortInterface(int[] a) {
+        startTime = System.currentTimeMillis();
+        quick_Sort(a, 0, a.length - 1);
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "快速排序", endTime - startTime);
+    }
 
-    private void quick_Sort(int arr[], int start, int end) {
+    private void quick_Sort(int[] arr, int start, int end) {
         int pivot = arr[start];
         int i = start;
         int j = end;
@@ -240,8 +246,62 @@ public class Sort {
         }
         if (i - 1 > start) quick_Sort(arr, start, i - 1);
         if (j + 1 < end) quick_Sort(arr, j + 1, end);
-        print_ArrayList(arr, "快速排序", 0);
     }
+    private void quick_SortInterface2(int[] a) {
+        startTime = System.currentTimeMillis();
+        qSort2(a, 0, a.length - 1);
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "快速排序", endTime - startTime);
+    }
+    public void qSort2(int[] a, int low, int high) {
+        int pivot;
+        if (low >= high)
+            return;
+        Stack<Integer> stack = new Stack<Integer>();
+        stack.push(low);
+        stack.push(high);
+        while (!stack.empty()) {
+            // 先弹出high,再弹出low
+            high = stack.pop();
+            low = stack.pop();
+            pivot = partition(a, low, high);
+            // 先压low,再压high
+            if (low < pivot - 1) {
+                stack.push(low);
+                stack.push(pivot - 1);
+            }
+            if (pivot + 1 < high) {
+                stack.push(pivot + 1);
+                stack.push(high);
+            }
+        }
+    }
+    public int partition(int[] a, int low, int high) {
+
+        // 三数取中,将中间元素放在第一个位置
+        if (a[low] > a[high])
+            swap(a, low, high);
+        if (a[(low + high) / 2] > a[high])
+            swap(a, (low + high) / 2, high);
+        if (a[low] < a[(low + high) / 2])
+            swap(a, (low + high) / 2, low);
+
+        int pivotKey = a[low]; // 用第一个元素作为基准元素
+        while (low < high) { // 两侧交替向中间扫描
+            while (low < high && a[high] >= pivotKey)
+                high--;
+            a[low] = a[high];
+            // swap(a, low, high); //比基准小的元素放到低端
+            while (low < high && a[low] <= pivotKey)
+                low++;
+            a[high] = a[low];
+            // swap(a, low, high); //比基准大的元素放到高端
+        }
+        a[low] = pivotKey; // 在中间位置放回基准值
+        return low; // 返回基准元素所在位置
+    }
+
+
 
     private void radix_Sort(int[] A, int[] temp, int n, int k, int r, int[] cnt) {//基数排序
         //A:原数组
