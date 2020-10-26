@@ -20,19 +20,21 @@ public class Sort {
         Sort m = new Sort();
         int[] temp = new int[8];
 //        m.print_ArrayList(m.dataInt(), "原数组", 0);
-//        m.bubble_Sort(m.dataInt());
-//        m.insertion_Sort(m.dataInt());
+        m.bubble_Sort(m.dataInt());
+        m.insertion_Sort(m.dataInt());
+        m.insertion_Sort2(m.dataInt());
 //        m.shell_Sort(m.dataInt());
-//        m.selection_Sort(m.dataInt());
+        m.selection_Sort(m.dataInt());
+
 //        m.heap_Sort(m.dataInt());
-//        m.mergeSort(m.dataInt());
-        m.quick_Sort(m.dataInt(),0,m.dataInt().length-1);
+        m.mergeSort(m.dataInt());
+        //    m.quick_Sort(m.dataInt(),0,m.dataInt().length-1);
         //m.radix_Sort(m.dataInt(), temp, m.dataInt().length, 2, 8, new int[8]);
 
     }
 
     public int[] dataInt() {
-        int[] data = new int[5];
+        int[] data = new int[5000];
         for (int i = 0; i < data.length; i++) {
             data[i] = (int) (Math.random() * 100) - 50;
         }
@@ -71,6 +73,23 @@ public class Sort {
         }
         endTime = System.currentTimeMillis();
         print_ArrayList(a, "插入排序", endTime - startTime);
+    }
+
+    private void insertion_Sort2(int[] a) {//插入排序
+        startTime = System.currentTimeMillis();
+        for (int i = 1; i < a.length ; i++) {
+            for (int j = i ; j > 0; j--) {
+                if (a[j] < a[j - 1]) {
+                    temp = a[j - 1];
+                    a[j - 1] = a[j];
+                    a[j] = temp;
+                } else {         //不需要交换
+                    break;
+                }
+            }
+        }
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "插入排序2", endTime - startTime);
     }
 
     private void shell_Sort(int[] a) {
@@ -221,7 +240,7 @@ public class Sort {
         }
         if (i - 1 > start) quick_Sort(arr, start, i - 1);
         if (j + 1 < end) quick_Sort(arr, j + 1, end);
-       print_ArrayList(arr,"快速排序",0);
+        print_ArrayList(arr, "快速排序", 0);
     }
 
     private void radix_Sort(int[] A, int[] temp, int n, int k, int r, int[] cnt) {//基数排序
@@ -261,8 +280,8 @@ public class Sort {
 
     private void print_ArrayList(int[] a, String str, long time) {
         System.out.print(str + ":");
-        for (int j : a)
-            System.out.print(j + " ");
+//        for (int j : a)
+//            System.out.print(j + " ");
 
         System.out.println("排序所用时间：" + time + "ms");
 
