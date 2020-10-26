@@ -1,3 +1,13 @@
+/*
+Java官方文档:http://hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/55f6804b4352/src/share/classes/java/util/Arrays.java
+
+数据量少，直接用插入排序。
+数据量大，不求稳定用快排，要稳定用归并（外排也用）。
+理解基数排序思想
+
+复杂极大数据量可以考虑复合排序算法：直接插入+归并排序保证稳定性与速度。
+ */
+
 public class Sort {
     int temp;
 
@@ -5,9 +15,9 @@ public class Sort {
         Sort m = new Sort();
 
         m.print_ArrayList(m.dataInt(), "原数组");
-//        m.bubble_Sort(m.dataInt());
-//        m.insertion_Sort(m.dataInt());
-//        m.shell_Sort(m.dataInt());
+        m.bubble_Sort(m.dataInt());
+        m.insertion_Sort(m.dataInt());
+        m.shell_Sort(m.dataInt());
         m.selection_Sort(m.dataInt());
         m.heap_Sort(m.dataInt());
         m.mergeSort(m.dataInt());
@@ -136,13 +146,13 @@ public class Sort {
                     break;
                 }
                 int right = left + 2 * span - 1;//右
-                if (right >= a.length-1)
-                    right = a.length-1;
+                if (right >= a.length - 1)
+                    right = a.length - 1;
                 merge(a, left, mid, right);
             }
             span *= 2;
         }
-        print_ArrayList(a,"归并排序（非递归）");
+        print_ArrayList(a, "归并排序（非递归）");
     }
 
     private void merge(int[] a, int left, int mid, int right) {
@@ -163,6 +173,10 @@ public class Sort {
         for (int p = 0; p < temp.length; p++) {
             a[left + p] = temp[p];
         }
+
+    }
+    private void quick_Sort(int[] a)
+    {
 
     }
 
