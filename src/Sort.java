@@ -1,8 +1,12 @@
 /*
 Java官方文档:http://hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/55f6804b4352/src/share/classes/java/util/Arrays.java
 
+
+
 数据量少，直接用插入排序。
+数据量中，求稳又快用归并，空间不够用
 数据量大，不求稳定用快排，要稳定用归并（外排也用）。
+
 理解基数排序思想
 
 复杂极大数据量可以考虑复合排序算法：直接插入+归并排序保证稳定性与速度。
@@ -26,17 +30,17 @@ public class Sort {
 //        m.selection_Sort(m.dataInt());
 
 //        m.heap_Sort(m.dataInt());
-//        m.mergeSort(m.dataInt());
-        m.quick_SortInterface(m.dataInt());//递归快排
-        m.quick_SortInterface2(m.dataInt());//非递归快排
+//       m.mergeSort(m.dataInt());
+//        m.quick_SortInterface(m.dataInt());//递归快排
+//        m.quick_Sort2(m.dataInt());//非递归快排
         //m.radix_Sort(m.dataInt(), temp, m.dataInt().length, 2, 8, new int[8]);
 
     }
 
     public int[] dataInt() {
-        int[] data = new int[700000];
+        int[] data = new int[10];
         for (int i = 0; i < data.length; i++) {
-            data[i] = (int) (Math.random() * 100) - 50;
+            data[i] = (int) (Math.random() * 1000) - (int) (Math.random() * 1000);
         }
         return data;
     }
@@ -247,14 +251,12 @@ public class Sort {
         if (i - 1 > start) quick_Sort(arr, start, i - 1);
         if (j + 1 < end) quick_Sort(arr, j + 1, end);
     }
-    private void quick_SortInterface2(int[] a) {
+
+    private void quick_Sort2(int[] a) {
         startTime = System.currentTimeMillis();
-        qSort2(a, 0, a.length - 1);
-        endTime = System.currentTimeMillis();
-        print_ArrayList(a, "快速排序", endTime - startTime);
-    }
-    public void qSort2(int[] a, int low, int high) {
         int pivot;
+        int low = 0;
+        int high = a.length - 1;
         if (low >= high)
             return;
         Stack<Integer> stack = new Stack<Integer>();
@@ -275,7 +277,10 @@ public class Sort {
                 stack.push(high);
             }
         }
+        endTime = System.currentTimeMillis();
+        print_ArrayList(a, "快速排序（非递归）", endTime - startTime);
     }
+
     public int partition(int[] a, int low, int high) {
 
         // 三数取中,将中间元素放在第一个位置
@@ -300,7 +305,6 @@ public class Sort {
         a[low] = pivotKey; // 在中间位置放回基准值
         return low; // 返回基准元素所在位置
     }
-
 
 
     private void radix_Sort(int[] A, int[] temp, int n, int k, int r, int[] cnt) {//基数排序
